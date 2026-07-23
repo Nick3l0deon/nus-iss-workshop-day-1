@@ -1,0 +1,12 @@
+[submodule "backend"]
+	path = backend
+	url = <REPO_URL>
+	branch = backend
+[submodule "frontend"]
+	path = frontend
+	url = <REPO_URL>
+	branch = frontend
+[submodule "cli"]
+	path = cli
+	url = <REPO_URL>
+	branch = cli

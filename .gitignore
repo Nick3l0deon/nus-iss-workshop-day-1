@@ -1,0 +1,7 @@
+# Angular build outputs (left by running ng build on the frontend branch)
+.angular/
+dist/
+node_modules/
+
+# macOS
+.DS_Store
