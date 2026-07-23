@@ -1,12 +1,12 @@
 [submodule "backend"]
 	path = backend
-	url = <REPO_URL>
+	url = https://github.com/Nick3l0deon/nus-iss-workshop-day-1.git
 	branch = backend
 [submodule "frontend"]
 	path = frontend
-	url = <REPO_URL>
+	url = https://github.com/Nick3l0deon/nus-iss-workshop-day-1.git
 	branch = frontend
 [submodule "cli"]
 	path = cli
-	url = <REPO_URL>
+	url = https://github.com/Nick3l0deon/nus-iss-workshop-day-1.git
 	branch = cli
