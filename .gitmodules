@@ -10,3 +10,7 @@
 	path = cli
 	url = https://github.com/Nick3l0deon/nus-iss-workshop-day-1.git
 	branch = cli
+[submodule "bundle"]
+	path = bundle
+	url = https://github.com/Nick3l0deon/nus-iss-workshop-day-1.git
+	branch = bundle
