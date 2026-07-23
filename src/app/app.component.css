@@ -1,77 +1,198 @@
-*, *::before, *::after { box-sizing: border-box; }
-
-body { margin: 0; font-family: system-ui, sans-serif; background: #f5f5f5; color: #111; }
-
-main {
-  max-width: 760px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+/* ── Hero glow — fixed, full-viewport-width band ────────────────────────────
+   Must be fixed + left/right 0 so it spans edge-to-edge on any screen width.
+   An absolutely-positioned element inside the content column would clip to
+   the column's max-width (~680 px) and look wrong on wide viewports.         */
+.hero-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 420px;
+  background: radial-gradient(
+    ellipse 120% 60% at 50% -10%,
+    rgba(240, 106,  64, 0.35)  0%,
+    rgba(220,  80, 120, 0.20) 40%,
+    transparent               70%
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
-h1 { font-size: 2rem; margin-bottom: 1.5rem; }
-h2 { font-size: 1.2rem; margin: 2rem 0 0.75rem; }
+/* ── Page container ────────────────────────────────────────────────────────── */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 160px 1.25rem 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
 
+/* ── Hero section ──────────────────────────────────────────────────────────── */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 1.05rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* ── Pill input form ───────────────────────────────────────────────────────── */
 .shorten-form {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1.25rem 1.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; }
+.pill-row {
+  display: flex;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  box-shadow: 0 4px 32px rgba(0,0,0,.45),
+              inset 0 1px 0 rgba(255,255,255,.04);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
 
-.input-row { display: flex; gap: 0.5rem; }
+.pill-row:focus-within {
+  box-shadow: 0 0 0 3px rgba(240, 106, 64, 0.30),
+              0 4px 32px rgba(0,0,0,.45);
+}
 
-input[type="url"] {
+.pill-input {
   flex: 1;
-  padding: 0.55rem 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.85rem 1.25rem;
   font-size: 1rem;
+  font-family: var(--font);
+  color: var(--text);
+  min-width: 0;
 }
-input[type="url"]:focus { outline: 2px solid #4f6ef7; border-color: #4f6ef7; }
 
-button {
-  padding: 0.55rem 1.25rem;
-  background: #4f6ef7;
+.pill-input::placeholder { color: var(--muted); }
+
+.pill-btn {
+  flex-shrink: 0;
+  background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
+  border-radius: var(--r-pill);
+  padding: 0.7rem 1.5rem;
+  margin: 5px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: var(--font);
   cursor: pointer;
+  transition: background 0.15s;
   white-space: nowrap;
 }
-button:disabled { opacity: 0.6; cursor: not-allowed; }
-button:not(:disabled):hover { background: #3a59e0; }
 
-.error { margin-top: 0.6rem; color: #c0392b; font-size: 0.9rem; }
+.pill-btn:hover:not(:disabled) { background: var(--accent-hover); }
+.pill-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.result {
-  margin-top: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  background: #eaf1fb;
-  border-radius: 6px;
-  font-size: 0.95rem;
+.form-error {
+  font-size: 0.85rem;
+  color: var(--error);
 }
 
-.links-table table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+/* ── Result notice ─────────────────────────────────────────────────────────── */
+.result-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--success-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 0.55rem 1.25rem;
+  font-size: 0.9rem;
+  backdrop-filter: blur(6px);
+}
+
+.result-label { color: var(--muted); white-space: nowrap; }
+.result-link  { color: var(--accent); font-weight: 600; word-break: break-all; }
+
+/* ── Links card ────────────────────────────────────────────────────────────── */
+.links-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: 0 4px 32px rgba(0,0,0,.45),
+              inset 0 1px 0 rgba(255,255,255,.04);
   overflow: hidden;
 }
 
-.links-table th, .links-table td {
-  padding: 0.65rem 0.9rem;
-  text-align: left;
-  border-bottom: 1px solid #eee;
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 20px 24px 0;
+}
+
+.empty {
+  padding: 24px;
+  color: var(--muted);
   font-size: 0.9rem;
 }
-.links-table th { background: #f9f9f9; font-weight: 600; }
-.links-table tr:last-child td { border-bottom: none; }
 
-.orig-url { max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.empty { color: #888; }
-a { color: #4f6ef7; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+thead th {
+  padding: 14px 24px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr { border-top: 1px solid var(--border); }
+tbody tr:first-child { border-top: none; }
+tbody tr:hover { background: var(--surface-raised); }
+
+tbody td {
+  padding: 14px 24px;
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.code-link { font-weight: 600; font-family: "SF Mono", "Fira Code", monospace; }
+
+.orig-url {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hits { color: var(--muted); }
+.meta { color: var(--muted); font-size: 0.8rem; white-space: nowrap; }

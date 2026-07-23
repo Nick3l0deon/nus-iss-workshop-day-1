@@ -1,1 +1,34 @@
-/* You can add global styles to this file, and also import other style files */
+/* ─── Design tokens ──────────────────────────────────────────────────────── */
+:root {
+  --bg:             #0d0d10;
+  --surface:        #17171c;
+  --surface-raised: #1e1e26;
+  --border:         #2a2a36;
+  --text:           #f0f0f4;
+  --muted:          #7a7a92;
+  --accent:         #f06a40;
+  --accent-hover:   #e5562c;
+  --error:          #f26b6b;
+  --success-bg:     rgba(255,255,255,.06);
+
+  --r-pill: 999px;
+  --r-card: 16px;
+
+  --font: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ─── Reset / base ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }

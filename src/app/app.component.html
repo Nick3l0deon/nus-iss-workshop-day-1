@@ -1,45 +1,53 @@
-<main>
-  <h1>Snip</h1>
+<!-- Full-viewport glow band — fixed so it always spans edge-to-edge -->
+<div class="hero-glow" aria-hidden="true"></div>
 
-  <section class="shorten-form">
-    <form (ngSubmit)="submit()" #f="ngForm">
-      <label for="urlInput">Long URL</label>
-      <div class="input-row">
+<div class="page">
+  <!-- ── Hero ────────────────────────────────────────────────────── -->
+  <header class="hero">
+    <h1>Snip</h1>
+    <p class="subtitle">Paste a long URL, get a short one instantly.</p>
+
+    <form class="shorten-form" (ngSubmit)="submit()" #f="ngForm">
+      <div class="pill-row">
         <input
           id="urlInput"
+          class="pill-input"
           type="url"
-          placeholder="https://example.com/very/long/path"
+          placeholder="https://example.com/very/long/path…"
           [ngModel]="inputUrl()"
           (ngModelChange)="inputUrl.set($event)"
           name="urlInput"
           autocomplete="off"
+          spellcheck="false"
         />
-        <button type="submit" [disabled]="loading()">
-          {{ loading() ? 'Shortening…' : 'Shorten' }}
+        <button class="pill-btn" type="submit" [disabled]="loading()">
+          {{ loading() ? '…' : 'Shorten' }}
         </button>
       </div>
+
+      @if (urlError()) {
+        <p class="form-error">{{ urlError() }}</p>
+      }
+      @if (apiError()) {
+        <p class="form-error">{{ apiError() }}</p>
+      }
     </form>
 
-    @if (urlError()) {
-      <p class="error">{{ urlError() }}</p>
-    }
-    @if (apiError()) {
-      <p class="error">{{ apiError() }}</p>
-    }
     @if (newLink()) {
-      <div class="result">
-        <span>Short link: </span>
-        <a [href]="newLink()!.shortUrl" target="_blank" rel="noopener">
+      <div class="result-notice">
+        <span class="result-label">Short link</span>
+        <a [href]="newLink()!.shortUrl" target="_blank" rel="noopener" class="result-link">
           {{ newLink()!.shortUrl }}
         </a>
       </div>
     }
-  </section>
+  </header>
 
-  <section class="links-table">
-    <h2>All links</h2>
+  <!-- ── Links card ───────────────────────────────────────────────── -->
+  <section class="links-card">
+    <h2 class="section-label">All links</h2>
     @if (links().length === 0) {
-      <p class="empty">No links yet.</p>
+      <p class="empty">No links yet — shorten your first URL above.</p>
     } @else {
       <table>
         <thead>
@@ -53,14 +61,14 @@
         <tbody>
           @for (link of links(); track link.code) {
             <tr>
-              <td><a [href]="link.shortUrl" target="_blank" rel="noopener">{{ link.code }}</a></td>
+              <td><a [href]="link.shortUrl" target="_blank" rel="noopener" class="code-link">{{ link.code }}</a></td>
               <td class="orig-url"><a [href]="link.url" target="_blank" rel="noopener">{{ link.url }}</a></td>
-              <td>{{ link.hits }}</td>
-              <td>{{ link.createdAt | date:'short' }}</td>
+              <td class="hits">{{ link.hits }}</td>
+              <td class="meta">{{ link.createdAt | date:'MMM d, y' }}</td>
             </tr>
           }
         </tbody>
       </table>
     }
   </section>
-</main>
+</div>
