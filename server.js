@@ -135,7 +135,7 @@ Bun.serve({
         return json({ error: "Invalid URL" }, 400);
       }
 
-      if (parsed.protocol !== "http:" && parsed.protocol !== "https:"\) {
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
         return json({ error: "Invalid URL" }, 400);
       }
 
