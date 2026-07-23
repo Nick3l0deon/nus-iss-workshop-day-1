@@ -1,0 +1,54 @@
+# .github/workflows/bundle.yml
+#
+# WHY NO "push" TRIGGER:
+# This file only exists on the `main` branch. A push-triggered workflow runs
+# from the workflow file on the branch that received the push, so a push to
+# `backend`, `frontend`, or `cli` would never find this file and the workflow
+# would never fire. The hourly schedule (plus manual dispatch) is the correct
+# mechanism here — it polls all source branches for new commits and rebuilds
+# when anything changed, which is idempotent anyway.
+
+name: Build bundle
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # every hour on the hour
+  workflow_dispatch:       # manual trigger from the Actions UI
+
+permissions:
+  contents: write          # needed to push the regenerated bundle branch + main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main with submodules
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          submodules: true
+          fetch-depth: 0          # full history so submodule bumps don't shallow-fail
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Configure git identity (github-actions[bot])
+        run: |
+          git config --global user.name  "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # Propagate the same identity into every submodule worktree
+          git submodule foreach \
+            'git config user.name  "github-actions[bot]" && \
+             git config user.email "github-actions[bot]@users.noreply.github.com"'
+
+      - name: Install Bun (needed by ng build → only as a sanity dep, not strictly)
+        # ng build is pure Node; Bun is only required at runtime by server.js.
+        # We skip Bun installation here — the build script never invokes `bun`.
+        run: echo "Bun not required for the build script"
+
+      - name: Build and push bundle
+        run: node scripts/build-bundle.mjs --push
