@@ -52,10 +52,14 @@ Each layer lives on its own orphan branch with no shared history:
 
 | Branch     | Contents                                 |
 |------------|------------------------------------------|
+| `main`     | This file + `.gitmodules` + `scripts/` only (superproject) |
 | `backend`  | `server.js`, `package.json`, `README.md` |
 | `frontend` | Angular 19 app (`src/`, `angular.json`, …) |
 | `cli`      | `cli.js`, wrappers, `package.json`, `README.md` |
-| `main`     | This file + `.gitmodules` only (superproject) |
+| [`bundle`](https://github.com/Nick3l0deon/nus-iss-workshop-day-1/tree/bundle) | Generated output — `server.js` + `cli.js` + built Angular assets + `Dockerfile` |
+
+> **Do not edit the `bundle` branch by hand.** It is assembled by
+> `scripts/build-bundle.mjs` (see [Bundle workflow](#bundle-workflow) below).
 
 The `main` branch mounts the other three as submodules so a single
 `git clone --recurse-submodules` gives you the whole project.
@@ -172,3 +176,46 @@ git submodule sync
 git add .gitmodules && git commit -m "chore: set remote submodule URLs"
 git push -u origin main
 ```
+
+---
+
+## Bundle workflow
+
+`scripts/build-bundle.mjs` (Node 18+, zero dependencies) assembles the `bundle`
+branch from the three source branches. It is **idempotent** — running it twice in
+a row when nothing changed produces no new commits.
+
+### What it does
+
+1. Updates `backend`, `frontend`, `cli` submodules to their branch tips
+2. Runs `npm install` + `npx ng build` in `frontend/`
+3. Assembles `bundle/`:
+   - `server.js` — copied from `backend/`
+   - `cli.js` — copied from `cli/`
+   - `public/` — Angular build output (`dist/snip-frontend/browser/`)
+   - `.env` — `PUBLIC_DIR=./public` (tells Bun server to serve the SPA)
+   - `package.json` — `"start": "bun server.js"`, no `"type"` field
+   - `Dockerfile` — `FROM oven/bun:1-alpine`, exposes port 3000
+   - `.dockerignore`
+   - `railway.json` — selects the Dockerfile builder
+4. Commits inside `bundle/` and bumps the superproject pointer
+
+### Usage
+
+```bash
+# Build only (safe, no network writes)
+node scripts/build-bundle.mjs
+
+# Build + push bundle branch + push main
+node scripts/build-bundle.mjs --push
+```
+
+### Deploy to Railway
+
+Point Railway at this repo, select the **bundle** branch, and it will use
+`railway.json` → `Dockerfile` automatically. Set env vars:
+
+| Variable              | Example value                      |
+|-----------------------|------------------------------------|
+| `PORT`                | `3000` (Railway sets this for you) |
+| `RAILWAY_PUBLIC_DOMAIN` | set by Railway automatically     |

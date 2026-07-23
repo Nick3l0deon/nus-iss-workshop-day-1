@@ -1,7 +1,13 @@
-# Angular build outputs (left by running ng build on the frontend branch)
+# Angular scaffolding / build outputs (left by switching branches)
 .angular/
 dist/
 node_modules/
+src/
+package.json
+package-lock.json
+tsconfig*.json
+angular.json
+.editorconfig
 
 # macOS
 .DS_Store
